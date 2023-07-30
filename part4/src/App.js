@@ -16,12 +16,13 @@ const App = () => {
 
   useEffect(() => {
     console.log("effect linea 13");
-    Axios.get("http://localhost:3000/persons").then((response) => {
+    Axios.get("http://localhost:3001/api/persons").then((response) => {
       const persons = response.data;
       setPersons(persons);
       console.log(persons);
     });
   }, []);
+
   const handleAddNewPerson = (e) => {
     e.preventDefault();
     if (persons.find((person) => person.name === newName)) {
