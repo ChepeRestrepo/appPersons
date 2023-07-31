@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Persons from "./components/Persons";
 import Filter from "./components/Filter";
+import personeService from "../src/services/persons";
 import PersonForm from "./components/PersonForm";
-import Axios from "axios";
 import Notification from "./components/Notification";
 
 const App = () => {
@@ -15,11 +15,9 @@ const App = () => {
   );
 
   useEffect(() => {
-    console.log("effect linea 13");
-    Axios.get("http://localhost:3001/api/persons").then((response) => {
-      const persons = response.data;
-      setPersons(persons);
-      console.log(persons);
+    personeService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
+      //console.log(contacts);
     });
   }, []);
 
@@ -32,14 +30,27 @@ const App = () => {
         name: newName,
         number: newNum,
       };
-      setPersons(persons.concat(newPerson));
-      alert("Usuario creado");
-      setNewName(newPerson.name);
-      setNewNum(newPerson.number);
-      setErrorMessage(`Added ${Object.values(newPerson)}`);
+      personeService.create(newPerson).then((addedPerson) => {
+        setPersons(persons.concat(addedPerson));
+        alert("Usuario creado");
+        setNewName("");
+        setNewNum("");
+        setErrorMessage(
+          `Person validation failed: name: Path ${addedPerson.name} is shorter than the minimum allowed length ${addedPerson.name.length}`
+        );
+      });
     }
   };
+
   const handleChange = (setValue) => (e) => setValue(e.target.value);
+
+  const handleRemovePerson = (id, name) => () => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personeService.remove(id).then(() => {
+        setPersons(persons.filter((person) => person.name !== name));
+      });
+    }
+  };
   return (
     <div>
       <h1>Phonebook</h1>
@@ -60,7 +71,11 @@ const App = () => {
       />
       <h2>Numbers</h2>
       <br />
-      <Persons persons={persons} query={filterQuery} />
+      <Persons
+        persons={persons}
+        query={filterQuery}
+        handleRemovePerson={handleRemovePerson}
+      />
     </div>
   );
 };

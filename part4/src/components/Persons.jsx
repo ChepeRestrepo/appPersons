@@ -1,17 +1,20 @@
 import React from "react";
-
-const Persons = ({ persons, query }) => {
+import Person from "./Person";
+const Persons = ({ persons, query, handleRemovePerson }) => {
   return (
-    <div>
+    <>
       NAME --------------- NUMBER
       {persons
         .filter((person) => person.name.toLowerCase().includes(query))
         .map((person) => (
-          <p key={person.name}>
-            {person.name} {person.number}
-          </p>
+          <Person
+            key={person.id}
+            name={person.name}
+            number={person.number}
+            handleRemovePerson={handleRemovePerson(person.id, person.name)}
+          />
         ))}
-    </div>
+    </>
   );
 };
 export default Persons;
