@@ -35,14 +35,15 @@ const App = () => {
         alert("Usuario creado");
         setNewName("");
         setNewNum("");
-        setErrorMessage(
-          `Person validation failed: name: Path ${addedPerson.name} is shorter than the minimum allowed length ${addedPerson.name.length}`
-        );
+        setErrorMessage(`Added ${addedPerson.name}`);
       });
     }
   };
 
-  const handleChange = (setValue) => (e) => setValue(e.target.value);
+  const handleChange = (setValue) => (e) => {
+    setValue(e.target.value);
+    setFilterQuery(e.target.value.toLowerCase());
+  };
 
   const handleRemovePerson = (id, name) => () => {
     if (window.confirm(`Delete ${name}?`)) {
